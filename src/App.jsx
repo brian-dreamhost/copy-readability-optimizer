@@ -24,12 +24,27 @@ const PLATFORM_HIGHLIGHT_MAP = {
   ad: ['google-ads-headline', 'google-ads-description'],
 };
 
+const DUMMY_TEXT = `Your website is the digital front door to your business. When potential customers arrive, they decide in seconds whether to stay or leave. That's why clear, compelling copy matters more than ever.
+
+Great marketing copy does three things: it grabs attention with a strong opening, builds trust through specific proof points, and drives action with a clear next step. If your copy tries to do everything at once, it ends up doing nothing well.
+
+Here's a simple test: read your homepage out loud. If you stumble over a sentence, your visitors will too. Aim for short sentences, active voice, and concrete language. Replace "innovative solutions" with what you actually do. Replace "trusted by thousands" with your real customer count.
+
+The best copy sounds like a smart friend giving advice — not a press release.`;
+
 export default function App() {
   const [mode, setMode] = useState('analyze');
   const [text, setText] = useState('');
   const [platform, setPlatform] = useState('general');
   const [analysis, setAnalysis] = useState(null);
   const [issues, setIssues] = useState([]);
+
+  const fillTestData = () => {
+    setText(DUMMY_TEXT);
+    setPlatform('blog');
+    setAnalysis(null);
+    setIssues([]);
+  };
 
   const handleAnalyze = useCallback(() => {
     if (!text.trim()) return;
@@ -82,6 +97,16 @@ export default function App() {
     <div className="min-h-screen bg-abyss bg-glow bg-grid">
       <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12 animate-fadeIn">
         <Header />
+
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={fillTestData}
+            className="px-3 py-1.5 text-xs font-mono bg-prince/20 text-prince border border-prince/30 rounded hover:bg-prince/30 transition-colors focus:outline-none focus:ring-2 focus:ring-prince focus:ring-offset-2 focus:ring-offset-abyss"
+          >
+            Fill Test Data
+          </button>
+        </div>
 
         {/* Tab bar */}
         <div className="flex gap-1 mb-6 bg-oblivion border border-metal/20 rounded-xl p-1 w-fit">
