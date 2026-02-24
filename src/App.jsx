@@ -53,6 +53,15 @@ export default function App() {
     setIssues(result ? result.issues.map((i) => ({ ...i })) : []);
   }, [text, platform]);
 
+  const handlePlatformChange = useCallback((newPlatform) => {
+    setPlatform(newPlatform);
+    if (analysis && text.trim()) {
+      const result = analyzeText(text, newPlatform);
+      setAnalysis(result);
+      setIssues(result ? result.issues.map((i) => ({ ...i })) : []);
+    }
+  }, [analysis, text]);
+
   const handleToggleFixed = useCallback((id) => {
     setIssues((prev) =>
       prev.map((issue) =>
@@ -92,6 +101,12 @@ export default function App() {
 
   const highlightedPlatformIds = PLATFORM_HIGHLIGHT_MAP[platform] || [];
   const charCount = text.length;
+
+  // Filter platform cards based on content type selection
+  const filteredPlatforms = platform === 'general'
+    ? platforms
+    : platforms.filter((p) => highlightedPlatformIds.includes(p.id));
+  const platformLabel = PLATFORM_TARGETS[platform]?.label || 'General';
 
   return (
     <div className="min-h-screen bg-abyss bg-glow bg-grid">
@@ -138,7 +153,7 @@ export default function App() {
           </button>
         </div>
 
-        <PlatformSelector value={platform} onChange={setPlatform} />
+        <PlatformSelector value={platform} onChange={handlePlatformChange} />
 
         {mode === 'analyze' ? (
           <>
@@ -204,7 +219,7 @@ export default function App() {
 
                   {/* Right column: Issues + Scores */}
                   <div className="lg:col-span-5 space-y-6" id="issue-sidebar">
-                    <ScorePanel scores={analysis.scores} />
+                    <ScorePanel scores={analysis.scores} platform={platform} targets={PLATFORM_TARGETS[platform]} />
                     <IssueSidebar
                       issues={issues}
                       onToggleFixed={handleToggleFixed}
@@ -214,31 +229,44 @@ export default function App() {
               </div>
             )}
 
-            {/* Platform Character Limits — always visible when there's text */}
-            {text.trim() && (
+            {/* Platform Character Limits — filtered by content type */}
+            {text.trim() && filteredPlatforms.length > 0 && (
               <section className="mt-8">
-                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cloudy">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
-                  </svg>
-                  Platform Character Limits
-                  {highlightedPlatformIds.length > 0 && (
-                    <span className="text-xs text-azure font-normal ml-2">
-                      Showing relevant platforms for {PLATFORM_TARGETS[platform]?.label}
-                    </span>
-                  )}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {platforms.map((p) => (
-                    <PlatformCard
-                      key={p.id}
-                      platform={p}
-                      charCount={charCount}
-                      text={text}
-                      highlighted={highlightedPlatformIds.includes(p.id)}
-                    />
-                  ))}
-                </div>
+                <details open>
+                  <summary className="flex items-center gap-2 cursor-pointer select-none group mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cloudy">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                    </svg>
+                    <h2 className="text-xl font-bold text-white">
+                      Character Limits
+                    </h2>
+                    {platform !== 'general' && (
+                      <span className="text-xs text-azure font-normal ml-1">
+                        for {platformLabel}
+                      </span>
+                    )}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-galactic ml-auto transition-transform duration-200 group-open:rotate-180">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </summary>
+                  <p className="text-xs text-galactic mb-3 -mt-2">
+                    {platform === 'general'
+                      ? 'See how your text fits common platform character limits. Select a content type above to filter to relevant platforms.'
+                      : `Showing platforms relevant to ${platformLabel.toLowerCase()} copy. Click a card to preview how your text would be truncated.`
+                    }
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {filteredPlatforms.map((p) => (
+                      <PlatformCard
+                        key={p.id}
+                        platform={p}
+                        charCount={charCount}
+                        text={text}
+                        highlighted={highlightedPlatformIds.includes(p.id)}
+                      />
+                    ))}
+                  </div>
+                </details>
               </section>
             )}
 

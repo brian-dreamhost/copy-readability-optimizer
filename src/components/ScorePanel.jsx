@@ -64,14 +64,21 @@ function ScoreGauge({ label, score, size = 'normal' }) {
   );
 }
 
-export default function ScorePanel({ scores }) {
+export default function ScorePanel({ scores, platform, targets }) {
   if (!scores) return null;
 
   const overallConfig = getScoreColor(scores.overall);
 
   return (
     <div className="card-gradient border border-metal/20 rounded-2xl p-4 sm:p-6">
-      <h2 className="text-sm font-semibold text-white mb-4">Scores</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold text-white">Scores</h2>
+        {targets && (
+          <span className="text-[10px] text-azure font-medium bg-azure/10 px-2 py-1 rounded">
+            {targets.label}
+          </span>
+        )}
+      </div>
 
       {/* Overall score */}
       <div className="flex flex-col items-center mb-6">
@@ -96,6 +103,27 @@ export default function ScorePanel({ scores }) {
         <ScoreBar label="Persuasion" score={scores.persuasion} weight="20%" />
         <ScoreBar label="Action" score={scores.action} weight="15%" />
       </div>
+
+      {/* Active targets */}
+      {targets && (
+        <div className="mt-5 pt-4 border-t border-metal/20">
+          <div className="text-[10px] text-galactic uppercase tracking-wider font-medium mb-2">Your Targets</div>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="bg-metal/10 rounded-lg px-2.5 py-2 text-center">
+              <div className="text-cloudy font-medium">Grade</div>
+              <div className="text-white font-semibold">{targets.gradeMin}-{targets.gradeMax}</div>
+            </div>
+            <div className="bg-metal/10 rounded-lg px-2.5 py-2 text-center">
+              <div className="text-cloudy font-medium">Sentence</div>
+              <div className="text-white font-semibold">&le; {targets.sentenceMax}w</div>
+            </div>
+            <div className="bg-metal/10 rounded-lg px-2.5 py-2 text-center">
+              <div className="text-cloudy font-medium">Paragraph</div>
+              <div className="text-white font-semibold">&le; {targets.paraMax}s</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
