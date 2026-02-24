@@ -87,7 +87,7 @@ export default function CompareView({ platform, onSwitchToAnalyze }) {
       `  Reading Ease: ${beforeAnalysis.stats.readingEase} → ${afterAnalysis.stats.readingEase}`,
       `  Passive Voice: ${beforeAnalysis.stats.passiveCount} → ${afterAnalysis.stats.passiveCount}`,
       `  Adverbs: ${beforeAnalysis.stats.adverbCount} → ${afterAnalysis.stats.adverbCount}`,
-      `  CRO Score: ${beforeAnalysis.scores.overall} → ${afterAnalysis.scores.overall}`,
+      `  Readability Score: ${beforeAnalysis.scores.overall} → ${afterAnalysis.scores.overall}`,
       '',
       'Summary:',
       summary,
@@ -359,7 +359,7 @@ export default function CompareView({ platform, onSwitchToAnalyze }) {
           <p className="text-galactic max-w-md mx-auto mb-4">
             Paste your original and revised copy above, then click
             &quot;Compare&quot; to see word-level changes, readability
-            improvements, and full CRO scoring.
+            improvements, and full readability scoring.
           </p>
           <button
             onClick={handleLoadExample}

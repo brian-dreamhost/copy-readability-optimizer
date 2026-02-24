@@ -126,7 +126,7 @@ const metricConfig = [
   {
     key: 'overallScore',
     dirKey: 'overallScore',
-    label: 'CRO Score',
+    label: 'Readability Score',
     get: (a) => a.scores.overall,
     format: (v) => `${v}/100`,
     change: (b, a) => {

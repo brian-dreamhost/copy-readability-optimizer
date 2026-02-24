@@ -106,9 +106,9 @@ export function generateSummary(beforeAnalysis, afterAnalysis, score) {
   // CRO overall score change
   const scoreDiff = afterAnalysis.scores.overall - beforeAnalysis.scores.overall;
   if (scoreDiff > 5) {
-    observations.push(`overall CRO score improved from ${beforeAnalysis.scores.overall} to ${afterAnalysis.scores.overall}`);
+    observations.push(`overall readability score improved from ${beforeAnalysis.scores.overall} to ${afterAnalysis.scores.overall}`);
   } else if (scoreDiff < -5) {
-    observations.push(`overall CRO score dropped from ${beforeAnalysis.scores.overall} to ${afterAnalysis.scores.overall}`);
+    observations.push(`overall readability score dropped from ${beforeAnalysis.scores.overall} to ${afterAnalysis.scores.overall}`);
   }
 
   // Passive voice
