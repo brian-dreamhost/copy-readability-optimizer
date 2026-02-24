@@ -30,8 +30,8 @@ export default function Header() {
       </h1>
       <p className="text-cloudy text-lg max-w-2xl">
         Get sentence-by-sentence feedback to make your marketing copy clearer,
-        more scannable, and more persuasive — plus platform character limits,
-        truncation previews, and keyword density analysis.
+        more scannable, and more persuasive — or compare two versions to see
+        what changed and whether it improved.
       </p>
     </header>
   );
