@@ -25,7 +25,7 @@ export default function Header() {
         </span>
       </div>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+      <h1 className="text-4xl sm:text-[2.7rem] font-bold text-white mb-3">
         Copy Readability Optimizer
       </h1>
       <p className="text-cloudy text-lg max-w-2xl">
