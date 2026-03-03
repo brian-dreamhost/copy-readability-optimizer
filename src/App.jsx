@@ -110,7 +110,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-abyss bg-glow bg-grid">
-      <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12 animate-fadeIn">
+      <div className="max-w-[1600px] mx-auto px-4 py-8 sm:py-12 animate-fadeIn">
         <Header />
 
         <div className="flex justify-end mb-4">
@@ -256,13 +256,14 @@ export default function App() {
                     }
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {filteredPlatforms.map((p) => (
+                    {filteredPlatforms.map((p, index) => (
                       <PlatformCard
                         key={p.id}
                         platform={p}
                         charCount={charCount}
                         text={text}
                         highlighted={highlightedPlatformIds.includes(p.id)}
+                        index={index}
                       />
                     ))}
                   </div>
