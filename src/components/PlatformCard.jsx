@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PlatformIcon from './PlatformIcon.jsx'
 import TruncationPreview from './TruncationPreview.jsx'
 
-export default function PlatformCard({ platform, charCount, text, highlighted }) {
+export default function PlatformCard({ platform, charCount, text, highlighted, index = 0 }) {
   const [expanded, setExpanded] = useState(false)
 
   const { id, name, limit, optimal } = platform
@@ -38,7 +38,7 @@ export default function PlatformCard({ platform, charCount, text, highlighted })
   }
 
   return (
-    <div className={`card-gradient border rounded-xl overflow-hidden transition-all duration-200 ${highlighted ? 'border-azure/50 ring-1 ring-azure/20' : 'border-metal/20'}`}>
+    <div className={`card-gradient border rounded-xl overflow-hidden transition-all duration-200 hover-lift animate-slideUp ${highlighted ? 'border-azure/50 ring-1 ring-azure/20' : 'border-metal/20'}`} style={{ animationDelay: `${index * 0.08}s` }}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-white/[0.02] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-azure focus:ring-offset-2 focus:ring-offset-abyss rounded-xl"

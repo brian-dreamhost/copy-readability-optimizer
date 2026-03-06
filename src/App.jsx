@@ -55,12 +55,12 @@ export default function App() {
 
   const handlePlatformChange = useCallback((newPlatform) => {
     setPlatform(newPlatform);
-    if (analysis && text.trim()) {
+    if (text.trim()) {
       const result = analyzeText(text, newPlatform);
       setAnalysis(result);
       setIssues(result ? result.issues.map((i) => ({ ...i })) : []);
     }
-  }, [analysis, text]);
+  }, [text]);
 
   const handleToggleFixed = useCallback((id) => {
     setIssues((prev) =>
@@ -98,6 +98,13 @@ export default function App() {
     },
     [platform]
   );
+
+  const handleStartOver = useCallback(() => {
+    setText('');
+    setAnalysis(null);
+    setIssues([]);
+    setPlatform('general');
+  }, []);
 
   const highlightedPlatformIds = PLATFORM_HIGHLIGHT_MAP[platform] || [];
   const charCount = text.length;
@@ -169,63 +176,70 @@ export default function App() {
                 />
               </div>
             ) : (
-              /* Post-analysis: split layout */
+              /* Post-analysis: score-first layout */
               <div className="space-y-6">
-                {/* Stats bar */}
-                <StatsBar analysis={analysis} />
-
-                {/* Main content area */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  {/* Left column: Editor + Highlighted text */}
-                  <div className="lg:col-span-7 space-y-6">
-                    {/* Collapsible editor */}
-                    <details className="card-gradient border border-metal/20 rounded-2xl">
-                      <summary className="p-4 cursor-pointer text-sm font-semibold text-white flex items-center gap-2 select-none">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-4 h-4 text-galactic"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                          />
-                        </svg>
-                        Edit Your Copy
-                        <span className="text-xs text-galactic font-normal ml-auto">
-                          Click to expand
-                        </span>
-                      </summary>
-                      <div className="p-4 pt-0">
-                        <Editor
-                          text={text}
-                          setText={setText}
-                          onAnalyze={handleAnalyze}
-                          isAnalyzed={true}
-                        />
-                      </div>
-                    </details>
-
-                    {/* Highlighted output */}
-                    <HighlightedText
-                      analysis={analysis}
-                      onSentenceClick={handleSentenceClick}
-                    />
+                {/* Action bar — always visible */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleAnalyze}
+                      className="bg-azure text-white font-semibold px-5 py-2 rounded-lg hover:bg-azure-hover transition-colors cursor-pointer text-sm flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-azure focus:ring-offset-2 focus:ring-offset-abyss"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" />
+                      </svg>
+                      Re-analyze
+                    </button>
+                    <button
+                      onClick={handleStartOver}
+                      className="text-sm text-galactic hover:text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-azure focus:ring-offset-2 focus:ring-offset-abyss rounded px-3 py-2"
+                    >
+                      Start over
+                    </button>
                   </div>
+                  <span className="text-xs text-galactic">
+                    {text.split(/\s+/).filter(Boolean).length} words
+                  </span>
+                </div>
 
-                  {/* Right column: Issues + Scores */}
-                  <div className="lg:col-span-5 space-y-6" id="issue-sidebar">
+                {/* Score + stats — the focal point */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <div className="lg:col-span-5">
                     <ScorePanel scores={analysis.scores} platform={platform} targets={PLATFORM_TARGETS[platform]} />
+                  </div>
+                  <div className="lg:col-span-7 flex flex-col gap-6">
+                    <StatsBar analysis={analysis} />
                     <IssueSidebar
                       issues={issues}
                       onToggleFixed={handleToggleFixed}
                     />
                   </div>
                 </div>
+
+                {/* Highlighted output — full width */}
+                <HighlightedText
+                  analysis={analysis}
+                  onSentenceClick={handleSentenceClick}
+                />
+
+                {/* Collapsible editor */}
+                <details className="card-gradient border border-metal/20 rounded-2xl">
+                  <summary className="p-4 cursor-pointer text-sm font-semibold text-white flex items-center gap-2 select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-galactic" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                    Edit Your Copy
+                    <span className="text-xs text-galactic font-normal ml-auto">Click to expand</span>
+                  </summary>
+                  <div className="p-4 pt-0">
+                    <Editor
+                      text={text}
+                      setText={setText}
+                      onAnalyze={handleAnalyze}
+                      isAnalyzed={true}
+                    />
+                  </div>
+                </details>
               </div>
             )}
 
